@@ -1,8 +1,10 @@
-import { createContext, useState } from "react";
-import { io } from "socket.io-client";
+import { createContext } from "react";
 
 // Socket Context
 export const SocketContext = createContext();
-export const socket = io("ws://localhost:3001");
-
 export const UserContext = createContext();
+
+/* function
+* takes parameter of username
+* returns a socket connection
+*/

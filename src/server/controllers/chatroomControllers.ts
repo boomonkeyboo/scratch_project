@@ -14,7 +14,7 @@ const db = drizzle(client);
 import {Express, Request, Response, NextFunction} from 'express';
 
 export function getAllChatrooms(req: Request, res: Response, next: NextFunction): void {
-  
+
   db.select().from(chatrooms)
   .then(data => {
     res.locals.allChatrooms = data
@@ -32,6 +32,7 @@ export async function addChatroom(req: Request, res: Response, next: NextFunctio
   if(!foundChatroom_name.length){
     try{
       await db.insert(chatrooms).values({ chatroom_name })
+      res.locals.chatroom_name = chatroom_name;
       return next();
     }
     catch(e){

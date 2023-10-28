@@ -1,29 +1,35 @@
 import React from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setIsAuth } from "../util/chatroomReducer.ts";
+import { useNavigateTo } from "./Main.jsx";
 
 function Navbar() {
-    const navigate = useNavigate();
-    const logout = () => {
-        fetch('http://localhost:3001/api/userlogout', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            mode: "cors",
-        })
-        login()
+    const dispatch = useDispatch();
+    const navigateTo = useNavigateTo();
+    async function logoutVerifiedUser() {
+        try {
+            const response = await fetch("api/userlogout", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.ok) {
+                console.log("User logged out");
+                navigateTo("/login", () => {
+                    dispatch(setIsAuth(false));
+                });
+            } else {
+                throw new Error("Unknown error occurred while logging out");
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
     }
 
-    function login() {
-        navigate("/login")
-    }
     function profile() {
-        navigate("/profile")
+        navigateTo("/profile")
     }
-
-
-
 
     return (
         <nav className="navbar">
@@ -33,7 +39,7 @@ function Navbar() {
             <div className="rightNav">
                 <ul>
                     <button className="navButton" onClick={profile}>Profile</button>
-                    <button className="navButton" onClick={logout}>Log Out</button>
+                    <button className="navButton" onClick={logoutVerifiedUser}>Log Out</button>
                 </ul>
             </div>
         </nav>

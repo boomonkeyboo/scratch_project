@@ -1,64 +1,39 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Route, Routes, useNavigate, Link, BrowserRouter } from "react-router-dom";
-import Main from "./components/Main.js";
-import Login from "./components/Login.js";
-import Signup from "./components/Signup.js";
-import Profile from "./components/Profile.js";
-import Update from "./components/Update.js";
+import React from 'react';
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import Main from "./components/Main.jsx";
+import Login from "./components/Login.jsx";
+import Signup from "./components/Signup.jsx";
+import Profile from "./components/Profile.jsx";
+import Update from "./components/Update.jsx";
 import './styles/App.scss'
-import { UserContext } from './Context.js';
-
+import AuthProvider from './components/AuthProvider.jsx';
+import Chatboard from './components/Chatboard.jsx';
 
 
 function App() {
-  const navigate = useNavigate();
-  // checks to see if verified user exists; redirects to login page if no user exists
-  const [user, setUser] = useState({});
-  const userValues = [user, setUser]
-  const userState = useContext(UserContext);
-
-
-  function login() {
-    navigate("/login")
-  }
-
-  // function loginCheck() {
-  //   fetch('http://localhost:3001/api/verifyuser', {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     mode: "cors",
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       if (data.user === undefined) {
-  //         login()
-  //       }
-  //       console.log(data.user)
-  //     })
-  // }
-  // useEffect(() => {
-  //   loginCheck()
-  // }, []);
-
-
   return (
-    <div
-    // style={{ backgroundImage: `url("https://gifdb.com/images/high/aesthetic-anime-pixelated-background-bnuuk8wf00lrrcvf.gif")`}}
-    >
-
-    <UserContext.Provider values={userValues}>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Main setUser={setUser} user={user}/>} />
-        <Route path="/login/*" element={<Login setUser={setUser} user={user} />} />
-        <Route path="/signup/*" element={<Signup />} />
-        <Route path="/profile/*" element={<Profile setUser={setUser} user={user} />} />
-        <Route path="/update/*" element={<Update setUser={setUser} user={user} />} />
+        <Route path="/" element={ // this is the main parent route, which will render the Main component, which renders an Outlet, which is a placeholder for the child routes of the parent route.
+          <AuthProvider>
+            <Main />
+          </AuthProvider>
+        }>
+          <Route index element={ // index element is the default route for the parent route
+            <Chatboard />
+        }/>
+          <Route path="profile" element={
+              <Profile />
+          }/>
+          <Route path="update" element={
+            <Update />
+        }/>
+        </Route> {/* end of main parent route */}
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
-    </UserContext.Provider>
-    </div>
-  )
+    </BrowserRouter>
+  );
 }
 
 export default App;
